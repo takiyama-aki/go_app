@@ -7,8 +7,8 @@ import (
 
     "gorm.io/driver/postgres"
     "gorm.io/gorm"
-    "goapp/config"
-    "goapp/models"
+    "github.com/takiyama-aki/go_app/config"
+    "github.com/takiyama-aki/go_app/models"
 )
 
 var DB *gorm.DB

@@ -6,8 +6,8 @@ import (
     "log"
 
     "github.com/gin-gonic/gin"
-    "goapp/config"
-    "goapp/database"
+    "github.com/takiyama-aki/go_app/config"
+    "github.com/takiyama-aki/go_app/database"
     // "goApp/handlers" など
 )
 
