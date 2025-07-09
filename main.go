@@ -8,7 +8,8 @@ import (
     "github.com/gin-gonic/gin"
     "github.com/takiyama-aki/go_app/config"
     "github.com/takiyama-aki/go_app/database"
-    // "goApp/handlers" など
+    "github.com/takiyama-aki/go_app/handlers"
+    "github.com/takiyama-aki/go_app/middleware"
 )
 
 func main() {
@@ -21,8 +22,9 @@ func main() {
     // 3. Gin エンジン起動
     r := gin.Default()
 
-    // セッションミドルウェア等の設定
-    // ...
+    // セッション用 Cookie ストア登録
+    store := cookie.NewStore([]byte(cfg.SessionKey))
+    r.Use(sessions.Sessions("goapp_session", store))
 
     // ルート定義
     // r.POST("/signup", handlers.SignUp)
