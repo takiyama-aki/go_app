@@ -6,6 +6,9 @@ import (
     "log"
 
     "github.com/gin-gonic/gin"
+    "github.com/gin-contrib/sessions"
+    "github.com/gin-contrib/sessions/cookie"
+
     "github.com/takiyama-aki/go_app/config"
     "github.com/takiyama-aki/go_app/database"
     "github.com/takiyama-aki/go_app/handlers"

@@ -1,0 +1,69 @@
+@host = http://localhost:8081
+
+### 1. SIGN UP
+POST {{host}}/signup
+Content-Type: application/json
+
+{
+  "email": "takiyamaakihito@gmail.com",
+  "password": "password123"
+}
+
+### 2. LOGIN (クッキーは自動保存されます)
+POST {{host}}/login
+Content-Type: application/json
+
+{
+  "email": "takiyamaakihito@gmail.com",
+  "password": "password123"
+}
+
+### 3. GET TRADES - 未認証 (401 Unauthorized となることを確認)
+GET {{host}}/trades
+
+### 4. GET TRADES - 認証あり
+GET {{host}}/trades?month=2025-07
+
+### 5. CREATE TRADE
+POST {{host}}/trades
+Content-Type: application/json
+
+{
+  "date": "2025-07-09T10:00:00Z",
+  "symbolName": "Apple Inc.",
+  "symbolCode": "AAPL",
+  "price": 190.50,
+  "quantity": 10,
+  "side": "LONG",
+  "profitLoss": 0,
+  "manualEntry": false
+}
+
+### 6. UPDATE TRADE (ID を適宜置き換え)
+PUT {{host}}/trades/1
+Content-Type: application/json
+
+{
+  "date": "2025-07-09T11:00:00Z",
+  "symbolName": "Apple Inc.",
+  "symbolCode": "AAPL",
+  "price": 191.00,
+  "quantity": 10,
+  "side": "LONG",
+  "profitLoss": 0,
+  "manualEntry": false
+}
+
+### 7. DELETE TRADE (ID を置き換え)
+DELETE {{host}}/trades/1
+
+### 8. GET ACCOUNT BALANCE
+GET {{host}}/account/balance
+
+### 9. UPDATE ACCOUNT BALANCE
+PUT {{host}}/account/balance
+Content-Type: application/json
+
+{
+  "balance": 1000.0
+}
