@@ -13,7 +13,17 @@ import (
     "github.com/takiyama-aki/go_app/models"
 )
 
-// SignUp : 新規ユーザー登録
+type SignUpRequest struct {
+    Email    string `json:"email" binding:"required,email"`
+    Password string `json:"password" binding:"required,min=8"`
+}
+
+type LoginRequest struct {
+    Email    string `json:"email" binding:"required,email"`
+    Password string `json:"password" binding:"required"`
+}
+
+// SignUp はユーザー登録のエンドポイント（スタブ）
 func SignUp(c *gin.Context) {
     var req SignUpRequest
     if err := c.ShouldBindJSON(&req); err != nil {
@@ -21,27 +31,16 @@ func SignUp(c *gin.Context) {
         return
     }
 
-    // パスワードハッシュ化
-    hash, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
-    if err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": "could not hash password"})
-        return
-    }
-
-    user := models.User{
-        Email:        req.Email,
-        PasswordHash: string(hash),
-        CreatedAt:    time.Now(),
-    }
+    hash, _ := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
+    user := models.User{Email: req.Email, PasswordHash: string(hash), CreatedAt: time.Now()}
     if err := database.DB.Create(&user).Error; err != nil {
         c.JSON(http.StatusConflict, gin.H{"error": "email already in use"})
         return
     }
-
     c.JSON(http.StatusCreated, gin.H{"id": user.ID, "email": user.Email})
 }
 
-// Login : 認証 → セッションに user_id をセット
+// Login はログインのエンドポイント（スタブ）
 func Login(c *gin.Context) {
     var req LoginRequest
     if err := c.ShouldBindJSON(&req); err != nil {
@@ -55,19 +54,13 @@ func Login(c *gin.Context) {
         return
     }
 
-    // パスワードチェック
-    if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(req.Password)); err != nil {
+    if bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(req.Password)) != nil {
         c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid credentials"})
         return
     }
 
-    // セッションに保存
     sess := sessions.Default(c)
     sess.Set("user_id", user.ID)
-    if err := sess.Save(); err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to save session"})
-        return
-    }
-
+    sess.Save()
     c.JSON(http.StatusOK, gin.H{"message": "login successful"})
 }

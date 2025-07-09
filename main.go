@@ -27,13 +27,25 @@ func main() {
     r.Use(sessions.Sessions("goapp_session", store))
 
     // ルート定義
-    // r.POST("/signup", handlers.SignUp)
-    // r.POST("/login", handlers.Login)
-    // api := r.Group("/")
-    // api.Use(middleware.RequireLogin())
-    // api.GET("/trades", handlers.ListTrades)
-    // ...
+    // 認証不要ルート
+    r.POST("/signup", handlers.SignUp)
+    r.POST("/login",  handlers.Login)
 
+    // 認証必須ルート
+    auth := r.Group("/")
+    auth.Use(middleware.RequireLogin())
+
+    // Trade CRUD
+    auth.GET(   "/trades",        handlers.ListTrades)
+    auth.POST(  "/trades",        handlers.CreateTrade)
+    auth.PUT(   "/trades/:id",    handlers.UpdateTrade)
+    auth.DELETE("/trades/:id",    handlers.DeleteTrade)
+
+    // Account 残高
+    auth.GET(  "/account/balance", handlers.GetBalance)
+    auth.PUT(  "/account/balance", handlers.UpdateBalance)
+
+    // サーバー起動
     addr := fmt.Sprintf(":%s", cfg.AppPort)
     log.Printf("Starting server on %s…", addr)
     if err := r.Run(addr); err != nil {
