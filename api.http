@@ -5,7 +5,7 @@ POST {{host}}/signup
 Content-Type: application/json
 
 {
-  "email": "takiyamaakihito@gmail.com",
+  "email": "test@gmail.com",
   "password": "password123"
 }
 
@@ -14,7 +14,7 @@ POST {{host}}/login
 Content-Type: application/json
 
 {
-  "email": "takiyamaakihito@gmail.com",
+  "email": "test@gmail.com",
   "password": "password123"
 }
 
@@ -40,7 +40,7 @@ Content-Type: application/json
 }
 
 ### 6. UPDATE TRADE (ID を適宜置き換え)
-PUT {{host}}/trades/1
+PUT {{host}}/trades/3
 Content-Type: application/json
 
 {

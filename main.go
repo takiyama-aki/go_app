@@ -27,6 +27,13 @@ func main() {
 
     // セッション用 Cookie ストア登録
     store := cookie.NewStore([]byte(cfg.SessionKey))
+
+    // セッションのオプション設定
+    store.Options(sessions.Options{
+    Path:     "/",
+    MaxAge:   60 * 60 * 24, // 1 日
+    HttpOnly: true,
+})
     r.Use(sessions.Sessions("goapp_session", store))
 
     // ルート定義
