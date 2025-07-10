@@ -5,77 +5,73 @@ import (
     "strconv"
     "time"
 
+    //"github.com/gin-contrib/sessions"
     "github.com/gin-gonic/gin"
-    "github.com/gin-contrib/sessions"
 
     "github.com/takiyama-aki/go_app/database"
+    "github.com/takiyama-aki/go_app/helpers"
     "github.com/takiyama-aki/go_app/models"
-    // "github.com/takiyama-aki/go_app/helpers"
 )
 
-// CreateTradeRequest は取引登録用のリクエストボディ構造体
+// -------------------- DTO --------------------
+
 type CreateTradeRequest struct {
     Date        time.Time `json:"date" binding:"required"`
     SymbolName  string    `json:"symbolName" binding:"required"`
     SymbolCode  string    `json:"symbolCode" binding:"required"`
-    Price       float64   `json:"price" binding:"required"`
-    Quantity    int       `json:"quantity" binding:"required"`
+    Price       float64   `json:"price" binding:"required,gt=0"`
+    Quantity    int       `json:"quantity" binding:"required,min=1"`
     Side        string    `json:"side" binding:"required,oneof=LONG SHORT"`
     ProfitLoss  float64   `json:"profitLoss"`
     ManualEntry bool      `json:"manualEntry"`
 }
 
-// UpdateTradeRequest は更新用に CreateTradeRequest と同じ
 type UpdateTradeRequest = CreateTradeRequest
 
-// ListTradesResponse は取引一覧取得 API のレスポンス
 type ListTradesResponse struct {
     Trades []models.Trade `json:"trades"`
 }
 
-// ListTrades: GET /trades?month=YYYY-MM
+// -------------------- Handlers --------------------
+
+// ListTrades GET /trades?month=YYYY-MM
 func ListTrades(c *gin.Context) {
     monthStr := c.DefaultQuery("month", time.Now().Format("2006-01"))
     month, err := time.Parse("2006-01", monthStr)
     if err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": "invalid month format"})
+        helpers.RespondError(c, http.StatusBadRequest, "PARAM-001", "invalid month format")
         return
     }
     start := time.Date(month.Year(), month.Month(), 1, 0, 0, 0, 0, time.Local)
     end := start.AddDate(0, 1, 0)
 
-    sess := sessions.Default(c)
-    uidRaw := sess.Get("user_id")
-    uid, ok := uidRaw.(uint)
+    uid, ok := helpers.CurrentUserID(c)
     if !ok {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": "invalid user id in session"})
+        helpers.RespondError(c, http.StatusUnauthorized, "AUTH-001", "unauthorized")
         return
     }
 
     var trades []models.Trade
     if err := database.DB.Where("user_id = ? AND date >= ? AND date < ?", uid, start, end).
-        Order("date asc").
-        Find(&trades).Error; err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch trades"})
+        Order("date asc").Find(&trades).Error; err != nil {
+        helpers.RespondError(c, http.StatusInternalServerError, "DB-001", "failed to fetch trades")
         return
     }
 
     c.JSON(http.StatusOK, ListTradesResponse{Trades: trades})
 }
 
-// CreateTrade: POST /trades
+// CreateTrade POST /trades
 func CreateTrade(c *gin.Context) {
     var req CreateTradeRequest
     if err := c.ShouldBindJSON(&req); err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error() + " (required fields: date, symbolName, symbolCode, price, quantity, side)"})
+        helpers.RespondError(c, http.StatusBadRequest, "PARAM-002", err.Error())
         return
     }
 
-    sess := sessions.Default(c)
-    uidRaw := sess.Get("user_id")
-    uid, ok := uidRaw.(uint)
+    uid, ok := helpers.CurrentUserID(c)
     if !ok {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": "invalid user id in session"})
+        helpers.RespondError(c, http.StatusUnauthorized, "AUTH-001", "unauthorized")
         return
     }
 
@@ -93,39 +89,38 @@ func CreateTrade(c *gin.Context) {
     }
 
     if err := database.DB.Create(&trade).Error; err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create trade"})
+        helpers.RespondError(c, http.StatusInternalServerError, "DB-002", "failed to create trade")
         return
     }
 
     c.JSON(http.StatusCreated, gin.H{"id": trade.ID})
 }
 
-// UpdateTrade: PUT /trades/:id
+// UpdateTrade PUT /trades/:id
 func UpdateTrade(c *gin.Context) {
     idParam := c.Param("id")
     id, err := strconv.ParseUint(idParam, 10, 64)
     if err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": "invalid trade id"})
+        helpers.RespondError(c, http.StatusBadRequest, "PARAM-003", "invalid trade id")
         return
     }
 
     var req UpdateTradeRequest
     if err := c.ShouldBindJSON(&req); err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()+" - invalid request body"})
+        helpers.RespondError(c, http.StatusBadRequest, "PARAM-002", err.Error())
         return
     }
 
-    sess := sessions.Default(c)
-    uidRaw := sess.Get("user_id")
-    uid, ok := uidRaw.(uint)
+    uid, ok := helpers.CurrentUserID(c)
     if !ok {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": "invalid user id in session"})
+        helpers.RespondError(c, http.StatusUnauthorized, "AUTH-001", "unauthorized")
         return
     }
 
     var trade models.Trade
-    if err := database.DB.Where("id = ? AND user_id = ?", id, uid).First(&trade).Error; err != nil {
-        c.JSON(http.StatusNotFound, gin.H{"error": "trade not found"})
+    res := database.DB.Where("id = ? AND user_id = ?", id, uid).First(&trade)
+    if res.RowsAffected == 0 {
+        helpers.RespondError(c, http.StatusNotFound, "RES-404", "trade not found")
         return
     }
 
@@ -139,32 +134,35 @@ func UpdateTrade(c *gin.Context) {
     trade.ManualEntry = req.ManualEntry
 
     if err := database.DB.Save(&trade).Error; err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to update trade"})
+        helpers.RespondError(c, http.StatusInternalServerError, "DB-003", "failed to update trade")
         return
     }
 
     c.Status(http.StatusNoContent)
 }
 
-// DeleteTrade: DELETE /trades/:id
+// DeleteTrade DELETE /trades/:id
 func DeleteTrade(c *gin.Context) {
     idParam := c.Param("id")
     id, err := strconv.ParseUint(idParam, 10, 64)
     if err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": "invalid trade id"})
+        helpers.RespondError(c, http.StatusBadRequest, "PARAM-003", "invalid trade id")
         return
     }
 
-    sess := sessions.Default(c)
-    uidRaw := sess.Get("user_id")
-    uid, ok := uidRaw.(uint)
+    uid, ok := helpers.CurrentUserID(c)
     if !ok {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": "invalid user id in session"})
+        helpers.RespondError(c, http.StatusUnauthorized, "AUTH-001", "unauthorized")
         return
     }
 
-    if err := database.DB.Where("id = ? AND user_id = ?", id, uid).Delete(&models.Trade{}).Error; err != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to delete trade"})
+    res := database.DB.Where("id = ? AND user_id = ?", id, uid).Delete(&models.Trade{})
+    if res.RowsAffected == 0 {
+        helpers.RespondError(c, http.StatusNotFound, "RES-404", "trade not found")
+        return
+    }
+    if res.Error != nil {
+        helpers.RespondError(c, http.StatusInternalServerError, "DB-004", "failed to delete trade")
         return
     }
 

@@ -8,6 +8,7 @@ import (
     "github.com/gin-gonic/gin"
     "github.com/gin-contrib/sessions"
     "github.com/gin-contrib/sessions/cookie"
+    "github.com/gin-contrib/cors"
 
     "github.com/takiyama-aki/go_app/config"
     "github.com/takiyama-aki/go_app/database"
@@ -24,6 +25,14 @@ func main() {
 
     // 3. Gin エンジン起動
     r := gin.Default()
+
+    // CORS ─ フロント (Vite) からのリクエストを許可
+    r.Use(cors.New(cors.Config{
+        AllowOrigins:     []string{"http://localhost:5173"},
+        AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
+        AllowHeaders:     []string{"Content-Type"},
+        AllowCredentials: true, // Cookie 認証なら必須
+    }))
 
     // セッション用 Cookie ストア登録
     store := cookie.NewStore([]byte(cfg.SessionKey))
