@@ -14,9 +14,19 @@ import (
     "github.com/takiyama-aki/go_app/database"
     "github.com/takiyama-aki/go_app/handlers"
     "github.com/takiyama-aki/go_app/middleware"
+
+    "encoding/json"                 // ② JSON を組み立てるための標準パッケージ
+    "net/http"                      // ③ HTTP サーバを立てる標準パッケージ
 )
 
 func main() {
+// ④ 1 本だけハンドラを登録。パスは /ping 固定
+    http.HandleFunc("/ping", func(w http.ResponseWriter, r *http.Request) {
+        w.Header().Set("Content-Type", "application/json")   // ⑤ レスポンスを JSON と明示
+        // ⑥ {"message":"pong"} を返す
+        json.NewEncoder(w).Encode(map[string]string{"message": "pong"})
+    })
+
     // 1. 設定読み込み
     cfg := config.Load()
 
@@ -42,8 +52,13 @@ func main() {
     Path:     "/",
     MaxAge:   60 * 60 * 24, // 1 日
     HttpOnly: true,
-})
+    })
+
     r.Use(sessions.Sessions("goapp_session", store))
+
+    r.GET("/ping", func(c *gin.Context) {
+    c.JSON(http.StatusOK, gin.H{"message": "pong"})
+    })
 
     // ルート定義
     // 認証不要ルート

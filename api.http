@@ -5,7 +5,7 @@ POST {{host}}/signup
 Content-Type: application/json
 
 {
-  "email": "test@gmail.com",
+  "email": "test2@gmail.com",
   "password": "password123"
 }
 
@@ -67,3 +67,7 @@ Content-Type: application/json
 {
   "balance": 1000.0
 }
+
+### 動作確認
+GET http://localhost:8081/ping
+Accept: application/json

@@ -16,11 +16,6 @@ function App() {
         </Routes>
       </main>
     </div>
-
-    // <div className="flex items-center justify-center min-h-screen bg-gray-50">
-    //   <h1 className="text-4xl font-bold">Hello, React + Tailwind!</h1>
-    //   <h2> test</h2>
-    // </div>
   );
 }
 
