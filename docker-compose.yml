@@ -10,7 +10,7 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
     ports:
-      - '${DB_PORT}:5433'
+      - '${DB_PORT}:5432'
     volumes:
       - db_data:/var/lib/postgresql/data
 
@@ -21,11 +21,11 @@ services:
     container_name: go-app-api
     restart: always
     ports:
-      - '${API_PORT}:8081'   # ← ホスト⇔コンテナ間のポートマッピング
+      - '${APP_PORT}:8081'   # ← ホスト⇔コンテナ間のポートマッピング
     environment:
       # DB 接続情報をそのまま渡す
       DB_HOST: db
-      DB_PORT: ${DB_PORT}
+      DB_PORT: "5432"
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
       DB_NAME: ${DB_NAME}
