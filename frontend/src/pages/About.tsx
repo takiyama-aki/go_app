@@ -23,8 +23,9 @@ export default function About() {
     try {
       const { message } = await signup(email, password);
       setMsg(message);                  // ← 常に表示される
-    } catch (e: any) {
-      setErr(e.response?.data?.message || e.message);
+    } catch (e: unknown) {
+      const err = e as { response?: { data?: { message?: string } }; message?: string };
+      setErr(err.response?.data?.message || err.message || String(e));
     }
   };
 
@@ -35,8 +36,9 @@ export default function About() {
       const { message, token } = await login(email, password);
       if (token) saveToken(token);        // トークン保存
       setMsg(message);
-    } catch (e: any) {
-      setErr(e.response?.data?.message || e.message);
+    } catch (e: unknown) {
+      const err = e as { response?: { data?: { message?: string } }; message?: string };
+      setErr(err.response?.data?.message || err.message || String(e));
     }
   };
 

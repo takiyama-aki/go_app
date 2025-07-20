@@ -17,8 +17,9 @@ export default function SignupForm() {
     try {
       const { message } = await signup(email, password);
       setResult(message);
-    } catch (e: any) {
-      setError(e.response?.data?.message || e.message);
+    } catch (e: unknown) {
+      const err = e as { response?: { data?: { message?: string } }; message?: string };
+      setError(err.response?.data?.message || err.message || String(e));
     }
   };
 
