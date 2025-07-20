@@ -14,9 +14,13 @@ export interface LoginResponse {
 }
 
 /** 新規作成 */
-export const signup = async (email: string, password: string): Promise<SignupResponse> => {
-  const res = await client.post("/signup", { email, password });
+export const signup = async (
+  email: string,
+  password: string,
+): Promise<SignupResponse> => {
+  await client.post("/signup", { email, password });
   // 本文が無ければデフォルトメッセージを付与
+  // const res = await client.post("/signup", { email, password });
   // return res.data ?? { message: "アカウントを作成しました" };
   return { message: "アカウントを作成しました。" };
 };

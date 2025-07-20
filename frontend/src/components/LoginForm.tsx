@@ -21,8 +21,9 @@ export default function LoginForm() {
       const { message, token } = await login(email, password);
       if (token) saveToken(token);
       setResult(message);
-    } catch (e: any) {
-      setError(e.response?.data?.message || e.message);
+    } catch (e: unknown) {
+      const err = e as { response?: { data?: { message?: string } }; message?: string };
+      setError(err.response?.data?.message || err.message || String(e));
     }
   };
 
