@@ -24,7 +24,9 @@ func main() {
     http.HandleFunc("/ping", func(w http.ResponseWriter, r *http.Request) {
         w.Header().Set("Content-Type", "application/json")   // ⑤ レスポンスを JSON と明示
         // ⑥ {"message":"pong"} を返す
-        json.NewEncoder(w).Encode(map[string]string{"message": "pong"})
+        if err := json.NewEncoder(w).Encode(map[string]string{"message": "pong"}); err != nil {
+            log.Printf("failed to write response: %v", err)
+        }
     })
 
     // 1. 設定読み込み
