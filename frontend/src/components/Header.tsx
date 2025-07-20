@@ -11,6 +11,9 @@ export default function Header() {
           <Link to="/about" className="text-blue-600 hover:underline">
             About
           </Link>
+          <Link to="/login" className="text-blue-600 hover:underline">
+            Login
+          </Link>
         </nav>
 
     </header>
