@@ -24,7 +24,10 @@ GET {{host}}/trades
 ### 4. GET TRADES - 認証あり
 GET {{host}}/trades?month=2025-07
 
-### 5. CREATE TRADE
+### 5. GET TRADE BY ID
+GET {{host}}/trades/1
+
+### 6. CREATE TRADE
 POST {{host}}/trades
 Content-Type: application/json
 
@@ -39,7 +42,7 @@ Content-Type: application/json
   "manualEntry": false
 }
 
-### 6. UPDATE TRADE (ID を適宜置き換え)
+### 7. UPDATE TRADE (ID を適宜置き換え)
 PUT {{host}}/trades/3
 Content-Type: application/json
 
@@ -54,13 +57,13 @@ Content-Type: application/json
   "manualEntry": false
 }
 
-### 7. DELETE TRADE (ID を置き換え)
+### 8. DELETE TRADE (ID を置き換え)
 DELETE {{host}}/trades/1
 
-### 8. GET ACCOUNT BALANCE
+### 9. GET ACCOUNT BALANCE
 GET {{host}}/account/balance
 
-### 9. UPDATE ACCOUNT BALANCE
+### 10. UPDATE ACCOUNT BALANCE
 PUT {{host}}/account/balance
 Content-Type: application/json
 
