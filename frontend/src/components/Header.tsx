@@ -8,6 +8,7 @@ import { useAuthStore } from "../store/auth";
 export default function Header() {
   const queryClient = useQueryClient();
   const { logout: setLogout } = useAuthStore();
+
   // 現在のユーザー情報を取得
   const { data } = useQuery({
     queryKey: ["me"],

@@ -14,8 +14,8 @@ POST {{host}}/login
 Content-Type: application/json
 
 {
-  "email": "test@gmail.com",
-  "password": "password123"
+  "email": "test1@test.com",
+  "password": "password"
 }
 
 ### 3. GET TRADES - 未認証 (401 Unauthorized となることを確認)
