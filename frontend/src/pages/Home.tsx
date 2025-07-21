@@ -1,6 +1,8 @@
+// サーバーの /ping API を呼び出すサンプルページ
 import { useQuery } from "@tanstack/react-query";
 import client from "../api/client";
 
+// トップページ
 export default function Home() {
   const { data, isLoading, error } = useQuery({
     queryKey: ["ping"],

@@ -1,4 +1,9 @@
 // main.go
+// ------------------------------
+// アプリケーションのエントリポイント。
+// Gin のセットアップ、DB接続、ルーティングなど
+// サーバー起動までの全体の流れをまとめている。
+// ------------------------------
 package main
 
 import (
@@ -19,6 +24,7 @@ import (
 	"net/http"      // ③ HTTP サーバを立てる標準パッケージ
 )
 
+// main 関数: 設定読み込み→DB接続→ルーティング設定→サーバー起動までを行う
 func main() {
 	// ④ 1 本だけハンドラを登録。パスは /ping 固定
 	http.HandleFunc("/ping", func(w http.ResponseWriter, r *http.Request) {

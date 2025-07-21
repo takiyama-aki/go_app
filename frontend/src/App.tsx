@@ -1,3 +1,4 @@
+// ルーティング設定と共通レイアウトを定義する
 import { Routes, Route} from "react-router-dom";
 
 import Header from "./components/Header";
@@ -7,6 +8,7 @@ import Login from "./pages/Login";
 import Trades from "./pages/Trades";
 import './App.css'
 
+// アプリケーション全体のルーティングを返すコンポーネント
 function App() {
   return (
     <div className="grid grid-rows-[auto_1fr] min-h-screen">

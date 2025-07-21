@@ -1,3 +1,4 @@
+// トレード情報を登録・表示するページ
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
@@ -18,21 +19,25 @@ const emptyForm: TradeRequest = {
   manualEntry: false,
 };
 
+// トレード一覧と登録フォームを表示するコンポーネント
 export default function Trades() {
   const queryClient = useQueryClient();
   const [form, setForm] = useState<TradeRequest>(emptyForm);
   const [editingId, setEditingId] = useState<number | null>(null);
 
+  // 一覧取得
   const { data } = useQuery({
     queryKey: ["trades"],
     queryFn: () => listTrades(),
   });
 
+  // 新規作成用ミューテーション
   const createMutation = useMutation({
     mutationFn: createTrade,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["trades"] }),
   });
 
+  // 更新用ミューテーション
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: number; data: TradeRequest }) =>
       updateTrade(id, data),
@@ -42,6 +47,7 @@ export default function Trades() {
     },
   });
 
+  // フォーム入力値の変更ハンドラ
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
@@ -49,6 +55,7 @@ export default function Trades() {
     setForm({ ...form, [name]: value });
   };
 
+  // 登録・更新ボタンの処理
   const handleSubmit = () => {
     if (editingId) {
       updateMutation.mutate({ id: editingId, data: form });
@@ -58,6 +65,7 @@ export default function Trades() {
     setForm(emptyForm);
   };
 
+  // テーブル行の編集開始
   const startEdit = (t: Trade) => {
     setEditingId(t.id);
     setForm({

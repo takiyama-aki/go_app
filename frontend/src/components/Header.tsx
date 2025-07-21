@@ -1,16 +1,20 @@
+// 画面上部のナビゲーションバー
 import { Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getCurrentUser, logout } from "../api/auth";
 import { useAuthStore } from "../store/auth";
 
+// ヘッダーコンポーネント。ログイン状態に応じて表示を切り替える
 export default function Header() {
   const queryClient = useQueryClient();
   const { logout: setLogout } = useAuthStore();
+  // 現在のユーザー情報を取得
   const { data } = useQuery({
     queryKey: ["me"],
     queryFn: getCurrentUser,
     retry: false,
   });
+  // ログアウト処理
   const { mutate } = useMutation({
     mutationFn: logout,
     onSuccess: () => {

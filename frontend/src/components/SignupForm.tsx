@@ -7,6 +7,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { signup } from "../api/auth";
 import { useAuthStore } from "../store/auth";
 
+// ユーザー登録フォーム
 export default function SignupForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -15,6 +16,7 @@ export default function SignupForm() {
   const queryClient = useQueryClient();
   const { login: setLogin } = useAuthStore();
 
+  // サインアップボタン押下時の処理
   const handleSignup = async () => {
     setResult(null);
     setError(null);

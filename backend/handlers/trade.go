@@ -1,5 +1,7 @@
 package handlers
 
+// トレード（売買記録）の CRUD を処理するハンドラ群
+
 import (
 	"net/http"
 	"strconv"
@@ -39,7 +41,8 @@ type GetTradeResponse struct {
 
 // -------------------- Handlers --------------------
 
-// ListTrades GET /trades?month=YYYY-MM
+// ListTrades は指定月のトレード一覧を取得する
+// GET /trades?month=YYYY-MM
 func ListTrades(c *gin.Context) {
 	monthStr := c.DefaultQuery("month", time.Now().Format("2006-01"))
 	month, err := time.Parse("2006-01", monthStr)
@@ -66,7 +69,8 @@ func ListTrades(c *gin.Context) {
 	c.JSON(http.StatusOK, ListTradesResponse{Trades: trades})
 }
 
-// GetTrade GET /trades/:id
+// GetTrade は ID 指定で 1 件のトレードを取得する
+// GET /trades/:id
 func GetTrade(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := strconv.ParseUint(idParam, 10, 64)
@@ -95,7 +99,8 @@ func GetTrade(c *gin.Context) {
 	c.JSON(http.StatusOK, GetTradeResponse{Trade: trade})
 }
 
-// CreateTrade POST /trades
+// CreateTrade は新しいトレードを登録する
+// POST /trades
 func CreateTrade(c *gin.Context) {
 	var req CreateTradeRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -130,7 +135,8 @@ func CreateTrade(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"id": trade.ID})
 }
 
-// UpdateTrade PUT /trades/:id
+// UpdateTrade は既存トレードを更新する
+// PUT /trades/:id
 func UpdateTrade(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := strconv.ParseUint(idParam, 10, 64)
@@ -175,7 +181,8 @@ func UpdateTrade(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
-// DeleteTrade DELETE /trades/:id
+// DeleteTrade はトレードを削除する
+// DELETE /trades/:id
 func DeleteTrade(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := strconv.ParseUint(idParam, 10, 64)
