@@ -3,6 +3,7 @@
 // ログインフォーム（/login を呼び出す）
 //-------------------------------------
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { login } from "../api/auth";
 import { useAuthStore } from "../store/auth";
 
@@ -13,6 +14,7 @@ export default function LoginForm() {
   const [error, setError]   = useState<string | null>(null);
 
   const saveToken = useAuthStore((s) => s.login);
+  const queryClient = useQueryClient();
 
   const handleLogin = async () => {
     setResult(null);
@@ -21,6 +23,7 @@ export default function LoginForm() {
       const { message, token } = await login(email, password);
       if (token) saveToken(token);
       setResult(message);
+      await queryClient.invalidateQueries({ queryKey: ["me"] });
     } catch (e: unknown) {
       const err = e as { response?: { data?: { message?: string } }; message?: string };
       setError(err.response?.data?.message || err.message || String(e));

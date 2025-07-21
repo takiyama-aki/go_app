@@ -3,13 +3,15 @@
 // 新規作成フォーム（/signup を呼び出す）
 //-------------------------------------
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { signup } from "../api/auth";
 
 export default function SignupForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [result, setResult] = useState<string | null>(null);
-  const [error, setError]   = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const queryClient = useQueryClient();
 
   const handleSignup = async () => {
     setResult(null);
@@ -17,6 +19,7 @@ export default function SignupForm() {
     try {
       const { message } = await signup(email, password);
       setResult(message);
+      await queryClient.invalidateQueries({ queryKey: ["me"] });
     } catch (e: unknown) {
       const err = e as { response?: { data?: { message?: string } }; message?: string };
       setError(err.response?.data?.message || err.message || String(e));
