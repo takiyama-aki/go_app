@@ -30,3 +30,12 @@ export const login = (email: string, password: string) =>
   client
     .post<LoginResponse>("/login", { email, password })
     .then((r) => r.data);
+
+export interface MeResponse {
+  id: number;
+  email: string;
+}
+
+export const getCurrentUser = () =>
+  client.get<MeResponse>("/me").then((r) => r.data);
+
