@@ -73,6 +73,7 @@ func main() {
 
 	// ログイン中ユーザー取得
 	auth.GET("/me", handlers.GetMe)
+	auth.POST("/logout", handlers.Logout)
 
 	// Trade CRUD
 	auth.GET("/trades", handlers.ListTrades)

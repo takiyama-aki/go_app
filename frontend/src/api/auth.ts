@@ -10,7 +10,6 @@ export interface SignupResponse {
 
 export interface LoginResponse {
   message: string;
-  token?: string;
 }
 
 /** 新規作成 */
@@ -30,6 +29,9 @@ export const login = (email: string, password: string) =>
   client
     .post<LoginResponse>("/login", { email, password })
     .then((r) => r.data);
+
+export const logout = () =>
+  client.post<{ message: string }>("/logout").then((r) => r.data);
 
 export interface MeResponse {
   id: number;

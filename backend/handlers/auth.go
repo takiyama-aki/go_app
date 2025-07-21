@@ -77,6 +77,17 @@ func Login(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "login successful"})
 }
 
+// Logout clears the current session.
+func Logout(c *gin.Context) {
+	sess := sessions.Default(c)
+	sess.Clear()
+	if err := sess.Save(); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to clear session"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "logout successful"})
+}
+
 // GetMe returns the currently logged-in user's basic information.
 func GetMe(c *gin.Context) {
 	uid, ok := helpers.CurrentUserID(c)
