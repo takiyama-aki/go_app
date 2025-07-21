@@ -1,6 +1,9 @@
 // handlers/auth.go
 package handlers
 
+// 認証関連のハンドラをまとめたファイル。
+// ユーザー登録・ログイン・ログアウトおよび自身の情報取得を扱う。
+
 import (
 	"net/http"
 	"time"
@@ -24,7 +27,7 @@ type LoginRequest struct {
 	Password string `json:"password" binding:"required"`
 }
 
-// SignUp はユーザー登録のエンドポイント（スタブ）
+// SignUp は新規ユーザーを作成しセッションに user_id を保存する
 func SignUp(c *gin.Context) {
 	var req SignUpRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -49,7 +52,7 @@ func SignUp(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"id": user.ID, "email": user.Email})
 }
 
-// Login はログインのエンドポイント（スタブ）
+// Login は既存ユーザーの認証を行いセッションに user_id を設定する
 func Login(c *gin.Context) {
 	var req LoginRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -77,7 +80,7 @@ func Login(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "login successful"})
 }
 
-// Logout clears the current session.
+// Logout はセッション情報を破棄してログアウトさせる
 func Logout(c *gin.Context) {
 	sess := sessions.Default(c)
 	sess.Clear()
@@ -88,7 +91,7 @@ func Logout(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "logout successful"})
 }
 
-// GetMe returns the currently logged-in user's basic information.
+// GetMe は現在ログイン中のユーザー情報を返す
 func GetMe(c *gin.Context) {
 	uid, ok := helpers.CurrentUserID(c)
 	if !ok {

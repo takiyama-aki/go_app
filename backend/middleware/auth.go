@@ -1,21 +1,24 @@
 package middleware
 
-import (
-    "net/http"
+// 認証状態を確認するためのミドルウェア
 
-    "github.com/gin-gonic/gin"
-    "github.com/gin-contrib/sessions"
+import (
+	"net/http"
+
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-gonic/gin"
 )
 
-// RequireLogin は user_id セッションがなければ 401 を返す
+// RequireLogin はセッションに user_id が存在するかを確認する
+// 無い場合は 401 を返して処理を中断する
 func RequireLogin() gin.HandlerFunc {
-    return func(c *gin.Context) {
-        sess := sessions.Default(c)
-        if sess.Get("user_id") == nil {
-            c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
-            c.Abort()
-            return
-        }
-        c.Next()
-    }
+	return func(c *gin.Context) {
+		sess := sessions.Default(c)
+		if sess.Get("user_id") == nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+			c.Abort()
+			return
+		}
+		c.Next()
+	}
 }

@@ -7,6 +7,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { login } from "../api/auth";
 import { useAuthStore } from "../store/auth";
 
+// ログインフォーム
 export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -16,6 +17,7 @@ export default function LoginForm() {
   const queryClient = useQueryClient();
   const { login: setLogin } = useAuthStore();
 
+  // ログインボタン押下時の処理
   const handleLogin = async () => {
     setResult(null);
     setError(null);

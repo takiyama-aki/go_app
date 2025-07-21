@@ -1,6 +1,7 @@
 // src/pages/About.tsx
-// Static description page about the application
+// アプリの概要を説明する静的ページ
 
+// アプリ紹介コンテンツを表示するコンポーネント
 export default function About() {
   return (
     <div className="space-y-6 max-w-md w-full mx-auto bg-white p-8 rounded-2xl shadow">

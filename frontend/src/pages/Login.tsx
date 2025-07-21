@@ -1,9 +1,11 @@
+// ログインとサインアップを行うページ
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { signup, login } from "../api/auth";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/auth";
 
+// フォーム入力を受け付けて認証 API を呼び出すコンポーネント
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -12,6 +14,7 @@ export default function Login() {
   const queryClient = useQueryClient();
   const { login: setLogin } = useAuthStore();
 
+  // 新規ユーザー作成処理
   const handleSignup = async () => {
     await signup(email, password);
     setLogin();
@@ -19,6 +22,7 @@ export default function Login() {
     navigate("/");
   };
 
+  // ログイン処理
   const handleLogin = async () => {
     await login(email, password);
     setLogin();
