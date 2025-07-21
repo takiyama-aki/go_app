@@ -1,12 +1,17 @@
 import { Link } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { getCurrentUser } from "../api/auth";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { getCurrentUser, logout } from "../api/auth";
 
 export default function Header() {
+  const queryClient = useQueryClient();
   const { data } = useQuery({
     queryKey: ["me"],
     queryFn: getCurrentUser,
     retry: false,
+  });
+  const { mutate } = useMutation({
+    mutationFn: logout,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["me"] }),
   });
 
   return (
@@ -22,9 +27,15 @@ export default function Header() {
         <Link to="/trades" className="text-blue-600 hover:underline">
           Trades
         </Link>
-        <Link to="/login" className="text-blue-600 hover:underline">
-          Login
-        </Link>
+        {data ? (
+          <button onClick={() => mutate()} className="text-blue-600 hover:underline">
+            Logout
+          </button>
+        ) : (
+          <Link to="/login" className="text-blue-600 hover:underline">
+            Login
+          </Link>
+        )}
       </nav>
       <span className="ml-4 text-sm text-gray-600">
         {data?.email ?? "未ログイン"}
