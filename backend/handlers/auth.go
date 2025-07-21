@@ -38,6 +38,14 @@ func SignUp(c *gin.Context) {
 		c.JSON(http.StatusConflict, gin.H{"error": "email already in use"})
 		return
 	}
+
+	sess := sessions.Default(c)
+	sess.Set("user_id", user.ID)
+	if err := sess.Save(); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to save session"})
+		return
+	}
+
 	c.JSON(http.StatusCreated, gin.H{"id": user.ID, "email": user.Email})
 }
 

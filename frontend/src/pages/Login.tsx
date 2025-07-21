@@ -1,25 +1,24 @@
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { signup, login } from "../api/auth";
 import { useNavigate } from "react-router-dom";
-import { useAuthStore } from "../store/auth";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const saveToken = useAuthStore((s) => s.login);
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const handleSignup = async () => {
     await signup(email, password);
-    const { token } = await login(email, password);
-    if (token) saveToken(token);
+    await queryClient.invalidateQueries({ queryKey: ["me"] });
     navigate("/");
   };
 
   const handleLogin = async () => {
-    const { token } = await login(email, password);
-    if (token) saveToken(token);
+    await login(email, password);
+    await queryClient.invalidateQueries({ queryKey: ["me"] });
     navigate("/");
   };
 
