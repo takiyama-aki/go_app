@@ -60,6 +60,8 @@ func main() {
 		Path:     "/",
 		MaxAge:   60 * 60 * 24, // 1 日
 		HttpOnly: true,
+		Secure:   true,
+		SameSite: http.SameSiteNoneMode,
 	})
 
 	r.Use(sessions.Sessions("goapp_session", store))
