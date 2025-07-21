@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { signup, login } from "../api/auth";
 import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "../store/auth";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -9,15 +10,18 @@ export default function Login() {
 
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { login: setLogin } = useAuthStore();
 
   const handleSignup = async () => {
     await signup(email, password);
+    setLogin();
     await queryClient.invalidateQueries({ queryKey: ["me"] });
     navigate("/");
   };
 
   const handleLogin = async () => {
     await login(email, password);
+    setLogin();
     await queryClient.invalidateQueries({ queryKey: ["me"] });
     navigate("/");
   };

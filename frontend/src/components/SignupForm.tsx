@@ -5,6 +5,7 @@
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { signup } from "../api/auth";
+import { useAuthStore } from "../store/auth";
 
 export default function SignupForm() {
   const [email, setEmail] = useState("");
@@ -12,6 +13,7 @@ export default function SignupForm() {
   const [result, setResult] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const queryClient = useQueryClient();
+  const { login: setLogin } = useAuthStore();
 
   const handleSignup = async () => {
     setResult(null);
@@ -19,6 +21,7 @@ export default function SignupForm() {
     try {
       const { message } = await signup(email, password);
       setResult(message);
+      setLogin();
       await queryClient.invalidateQueries({ queryKey: ["me"] });
     } catch (e: unknown) {
       const err = e as { response?: { data?: { message?: string } }; message?: string };

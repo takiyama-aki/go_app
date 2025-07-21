@@ -1,9 +1,11 @@
 import { Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getCurrentUser, logout } from "../api/auth";
+import { useAuthStore } from "../store/auth";
 
 export default function Header() {
   const queryClient = useQueryClient();
+  const { logout: setLogout } = useAuthStore();
   const { data } = useQuery({
     queryKey: ["me"],
     queryFn: getCurrentUser,
@@ -11,7 +13,10 @@ export default function Header() {
   });
   const { mutate } = useMutation({
     mutationFn: logout,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["me"] }),
+    onSuccess: () => {
+      setLogout();
+      queryClient.invalidateQueries({ queryKey: ["me"] });
+    },
   });
 
   return (
