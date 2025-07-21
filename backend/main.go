@@ -71,6 +71,9 @@ func main() {
 	auth := r.Group("/")
 	auth.Use(middleware.RequireLogin())
 
+	// ログイン中ユーザー取得
+	auth.GET("/me", handlers.GetMe)
+
 	// Trade CRUD
 	auth.GET("/trades", handlers.ListTrades)
 	auth.GET("/trades/:id", handlers.GetTrade)
