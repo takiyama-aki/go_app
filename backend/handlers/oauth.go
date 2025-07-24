@@ -102,5 +102,6 @@ func OAuthCallback(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "login successful"})
+	// ログイン後はフロントエンドへリダイレクト
+	c.Redirect(http.StatusFound, "http://localhost:5173")
 }

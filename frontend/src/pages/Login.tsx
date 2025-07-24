@@ -14,6 +14,11 @@ export default function Login() {
   const queryClient = useQueryClient();
   const { login: setLogin } = useAuthStore();
 
+  // Google ログイン処理
+  const handleGoogleLogin = () => {
+    window.location.href = "/oauth/login";
+  };
+
   // 新規ユーザー作成処理
   const handleSignup = async () => {
     await signup(email, password);
@@ -63,6 +68,12 @@ export default function Login() {
           disabled={!email || !password}
         >
           ログイン
+        </button>
+        <button
+          className="btn bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+          onClick={handleGoogleLogin}
+        >
+          Googleでログイン
         </button>
       </div>
     </div>
