@@ -41,6 +41,9 @@ func main() {
 	// 2. DB 初期化（接続＆マイグレーション）
 	database.Init(cfg)
 
+	// OAuth 設定初期化
+	handlers.InitOAuth(cfg)
+
 	// 3. Gin エンジン起動
 	r := gin.Default()
 
@@ -74,6 +77,8 @@ func main() {
 	// 認証不要ルート
 	r.POST("/signup", handlers.SignUp)
 	r.POST("/login", handlers.Login)
+	r.GET("/oauth/login", handlers.OAuthLogin)
+	r.GET("/oauth/callback", handlers.OAuthCallback)
 
 	// 認証必須ルート
 	auth := r.Group("/")

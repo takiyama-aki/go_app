@@ -13,13 +13,16 @@ import (
 
 // Config holds application-wide settings.
 type Config struct {
-	AppPort    string // アプリケーション起動ポート
-	DBHost     string
-	DBPort     int
-	DBUser     string
-	DBPassword string
-	DBName     string
-	SessionKey string // セッション用シークレット
+	AppPort           string // アプリケーション起動ポート
+	DBHost            string
+	DBPort            int
+	DBUser            string
+	DBPassword        string
+	DBName            string
+	SessionKey        string // セッション用シークレット
+	OAuthClientID     string // OAuth クライアント ID
+	OAuthClientSecret string // OAuth クライアントシークレット
+	OAuthRedirectURL  string // OAuth リダイレクト URL
 }
 
 // Load は .env と環境変数を読み取り Config 構造体を返す
@@ -35,13 +38,16 @@ func Load() *Config {
 	}
 
 	return &Config{
-		AppPort:    getEnv("APP_PORT", "8081"),
-		DBHost:     getEnv("DB_HOST", "localhost"),
-		DBPort:     port,
-		DBUser:     getEnv("DB_USER", ""),
-		DBPassword: getEnv("DB_PASSWORD", ""),
-		DBName:     getEnv("DB_NAME", ""),
-		SessionKey: getEnv("SESSION_KEY", "changeme"),
+		AppPort:           getEnv("APP_PORT", "8081"),
+		DBHost:            getEnv("DB_HOST", "localhost"),
+		DBPort:            port,
+		DBUser:            getEnv("DB_USER", ""),
+		DBPassword:        getEnv("DB_PASSWORD", ""),
+		DBName:            getEnv("DB_NAME", ""),
+		SessionKey:        getEnv("SESSION_KEY", "changeme"),
+		OAuthClientID:     getEnv("OAUTH_CLIENT_ID", ""),
+		OAuthClientSecret: getEnv("OAUTH_CLIENT_SECRET", ""),
+		OAuthRedirectURL:  getEnv("OAUTH_REDIRECT_URL", ""),
 	}
 }
 

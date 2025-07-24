@@ -10,11 +10,13 @@ require (
 	github.com/gin-gonic/gin v1.10.1
 	github.com/joho/godotenv v1.5.1
 	golang.org/x/crypto v0.39.0
+	golang.org/x/oauth2 v0.30.0
 	gorm.io/driver/postgres v1.6.0
 	gorm.io/gorm v1.30.0
 )
 
 require (
+	cloud.google.com/go/compute/metadata v0.3.0 // indirect
 	github.com/bytedance/sonic v1.13.3 // indirect
 	github.com/bytedance/sonic/loader v0.2.4 // indirect
 	github.com/cloudwego/base64x v0.1.5 // indirect
