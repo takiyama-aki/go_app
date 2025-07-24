@@ -16,7 +16,8 @@ export default function Login() {
 
   // Google ログイン処理
   const handleGoogleLogin = () => {
-    window.location.href = "/oauth/login";
+    const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:8081";
+    window.location.href = `${baseUrl}/oauth/login`;
   };
 
   // 新規ユーザー作成処理
